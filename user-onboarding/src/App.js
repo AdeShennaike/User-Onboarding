@@ -1,11 +1,13 @@
 import './App.css';
 import React, {useEffect, useState} from 'react'
 import axios from 'axios'
+import Form from './components/Form';
 
 // Information and initial states
 const intialInfoValues = {
   // Text Inputs
-      name: '',
+      first_name: '',
+      last_name: '',
       email: '',
       password: '',
   // Checkbox Inputs
@@ -25,8 +27,8 @@ function App() {
 
   useEffect(() =>{axios.get('https://reqres.in/api/users')
   .then(res => {
-    setUsers(res.data)
-    console.log(res.data)
+    setUsers(res.data.data)
+    console.log(res.data.data)
   })
   .catch(err => {
     console.error(err)
@@ -34,7 +36,7 @@ function App() {
 },[])
   return (
     <div className="App">
-      
+      <Form/>
     </div>
   );
 }
