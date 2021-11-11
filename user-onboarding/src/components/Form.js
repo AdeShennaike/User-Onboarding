@@ -1,14 +1,16 @@
 import React from 'react';
 
 export default function Form (props){
-
+const onSubmit = (evt) =>{
+    evt.preventDefault()
+}
     return (
     <form className = 'form container' onSubmit={'onSubmit'}>
         {/* Submit button */}
         <div className = 'create-user submit'>
             <h2>Create User</h2>
             {/* initially disable */}
-            <button>Submit</button>
+            <button disable = {'disable'}>Submit</button>
         </div>
 
         {/* Error Messages */}
@@ -32,21 +34,21 @@ export default function Form (props){
                 <input
                     type = 'text'
                     name = 'last_name'
-                    onChange = {'onChange'}
+                    onChange = {props.change}
                 />
             </label>
             <label>Email
                 <input
                     type = 'text'
                     name = 'email'
-                    onChange = {'onChange'}
+                    onChange = {props.change}
                 />
             </label>Password
             <label>
                 <input
                     type = 'text'
                     name = 'password'
-                    onChange = {'onChange'}
+                    onChange = {props.change}
                 />
             </label>
         </div>
@@ -58,7 +60,7 @@ export default function Form (props){
                 <input
                     type = 'checkbox'
                     name = 'terms_of_service'
-                    onChange = {'onChange'}
+                    onChange = {props.change}
                     checked = {''}
                 />
             </label>

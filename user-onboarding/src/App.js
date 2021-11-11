@@ -4,7 +4,7 @@ import axios from 'axios'
 import Form from './components/Form';
 
 // Information and initial states
-const intialInfoValues = {
+const initialInfoValues = {
   // Text Inputs
       first_name: '',
       last_name: '',
@@ -17,13 +17,18 @@ const intialInfoValues = {
   }
   
   const initialInfoErrors = {
-      name: '',
-      email: '',
-      password: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    password: '',
   }
+  const initialSubmitValue = true
 
 function App() {
   const [users, setUsers] = useState([])
+  const [disable, setDisable] = useState(initialSubmitValue)
+  const [errors, setErrors] = useState(initialInfoErrors)
+  const [infoValue, setInfoValue] = useState(initialInfoValues)
 
   useEffect(() =>{axios.get('https://reqres.in/api/users')
   .then(res => {
@@ -34,9 +39,23 @@ function App() {
     console.error(err)
   })
 },[])
+
+// Event handlers
+const onChange = (name, value) =>{
+  setInfoValue({
+    ...infoValue,
+    [name]:value
+  })
+}
+
   return (
     <div className="App">
-      <Form/>
+      <Form>
+      errors = {errors}
+      value = {infoValue}
+      disable = {disable}
+      change = {onChange}
+      </Form>
     </div>
   );
 }
