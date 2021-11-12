@@ -1,7 +1,9 @@
 import './App.css';
-import React, {useEffect, useState} from 'react'
-import axios from 'axios'
+import React, {useEffect, useState} from 'react';
+import axios from 'axios';
 import Form from './components/Form';
+import schema from './validate/Schema';
+import * as yup from 'yup';
 
 // Information and initial states
 const initialInfoValues = {
@@ -11,9 +13,7 @@ const initialInfoValues = {
       email: '',
       password: '',
   // Checkbox Inputs
-      terms_of_service: false,
-  // Submit Inputs
-      submit: ''
+      tos: false,
   }
   
   const initialInfoErrors = {
@@ -21,46 +21,60 @@ const initialInfoValues = {
     last_name: '',
     email: '',
     password: '',
+    tos: false
   }
-  const initialSubmitValue = true
+  // const initialSubmitValue = true
 
 function App() {
   const [users, setUsers] = useState([])
-  const [disable, setDisable] = useState(initialSubmitValue)
-  const [errors, setErrors] = useState(initialInfoErrors)
+  // const [disable, setDisable] = useState(initialSubmitValue)
+  const [infoErrors, setInfoErrors] = useState(initialInfoErrors)
   const [infoValue, setInfoValue] = useState(initialInfoValues)
 
-  useEffect(() =>{axios.get('https://reqres.in/api/users')
-  .then(res => {
-    setUsers(res.data.data)
-    console.log(res.data.data)
-  })
-  .catch(err => {
-    console.error(err)
-  })
-},[])
-
 // Event handlers
-const onSubmit = () => {
-  
+const validate = (name, value) => {
+  yup.reach(schema, name)
+  .validate(value)
+  .then(() => setInfoErrors({ ...infoErrors, [name]: ''}))
+  .catch(err => setInfoErrors({ ...infoErrors, [name]: err.errors[0]}))
 }
-const onChange = (name, value) =>{
-  setInfoValue({
-    ...infoValue,
-    [name]:value
+const onSubmit = () => {
+  axios.post('https://reqres.in/api/users', infoValue)
+    .then(res => {
+      setUsers([res.data, ...users])
+    })
+    .catch(err => {
+        console.error(err)
+    })
+    .finally(() => setInfoValue(initialInfoValues))
+}
+const handleChange = (name, value) =>{
+  validate(name, value)
+  setInfoValue({...infoValue, [name]:value
   })
 }
+
+// useEffect(() => {
+//   schema.isValid(infoValue)
+//   .then(valid => setDisable(!valid));
+// }, [infoValue])
 
   return (
     <div className="App">
       <h1>Look At My Form!!!!</h1>
-      <Form>
-      errors = {errors}
+      <Form
+      errors = {infoErrors}
       value = {infoValue}
-      disable = {disable}
-      change = {onChange}
-      {/* submit =  */}
-      </Form>
+      //  disable = {disable}
+      change = {handleChange}
+      submit = {onSubmit}
+      />
+      {users.map(user => (
+        <div key={users.id}>
+          <p>{user.createdAt}</p>
+          <p>{user.email}</p>
+          </div>
+      ))}
     </div>
   );
 }
